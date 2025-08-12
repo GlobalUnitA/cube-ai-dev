@@ -12,12 +12,20 @@
                         @else
                         게시글 수정
                         @endif
-                    </h5>    
+                    </h5>
                 </div>
                 @if($mode == 'write')
-                <form method="POST" id="boardForm" action="{{ route('admin.post.write') }}" >
+                    @if($board->is_popup == 'y')
+                        <form method="POST" id="boardForm" action="{{ route('admin.post.write') }}" >
+                    @else
+                        <form method="POST" id="ajaxForm" action="{{ route('admin.post.write') }}" >
+                    @endif
                 @else
-                <form method="POST" id="boardForm" action="{{ route('admin.post.modify') }}" >
+                    @if($board->is_popup == 'y')
+                        <form method="POST" id="boardForm" action="{{ route('admin.post.modify') }}" >
+                    @else
+                        <form method="POST" id="ajaxForm" action="{{ route('admin.post.modify') }}" >
+                    @endif
                 @endif
                     @csrf
                     <input type="hidden" name="board_id" value="{{ $board->id }}">
@@ -73,8 +81,12 @@
                             <tr>
                                 <th class="text-center align-middle">내용</th>
                                 <td colspan=3 class="d-flex align-middle">
+                                    @if($board->is_popup == 'y')
                                     <div id="editor" data-content="{{ $view->content ?? '' }}"></div>
                                     <textarea name="content" id="content" class="d-none"></textarea>
+                                    @else
+                                    <textarea name="content" id="content" class="form-control" rows="12">{!! $view->content !!}</textarea>
+                                    @endif
                                 </td>
                             </tr>
                         </tbody>
