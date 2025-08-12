@@ -85,7 +85,7 @@
                                     <div id="editor" data-content="{{ $view->content ?? '' }}"></div>
                                     <textarea name="content" id="content" class="d-none"></textarea>
                                     @else
-                                    <textarea name="content" id="content" class="form-control" rows="12">{!! $view->content !!}</textarea>
+                                    <textarea name="content" id="content" class="form-control" rows="12">{!! $view->content ?? '' !!}</textarea>
                                     @endif
                                 </td>
                             </tr>
