@@ -13,11 +13,12 @@ class StakingPolicy extends Model
 
     protected $fillable = [
         'coin_id',
-        'staking_type',
+        'staking_name',
         'min_quantity',
         'max_quantity',
         'daily',
         'period',
+        'memo'
     ];
 
     protected $casts = [
@@ -30,7 +31,7 @@ class StakingPolicy extends Model
         'staking_locale_name',
         'staking_locale_memo',
     ];
-
+    
     public function translations()
     {
         return $this->hasMany(StakingPolicyTranslation::class, 'policy_id', 'id');
