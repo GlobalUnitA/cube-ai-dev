@@ -31,7 +31,7 @@ class Staking extends Model
     protected $appends = [
         'status_text',
     ];
-
+    
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -101,7 +101,7 @@ class Staking extends Model
                 if ($staking->policy->staking_type === 'daily') {
 
                     $principal = $staking->amount / $staking->period;
-                    $profit = abs($profit - $principal);
+                    $profit -= $principal; 
 
                     Log::channel('staking')->info('Staking profit - principal', [
                         'user_id' => $staking->user_id,
@@ -111,7 +111,7 @@ class Staking extends Model
                         'timestamp' => now(),
                     ]);
 
-                    $asset = $staking->asset;
+                    $asset = $staking->asset;    
 
                     $asset_transfer = AssetTransfer::create([
                         'user_id' => $staking->user_id,
@@ -171,7 +171,7 @@ class Staking extends Model
                     'profit' => $profit,
                     'timestamp' => now(),
                 ]);
-
+                
 
                 DB::commit();
 
@@ -188,7 +188,7 @@ class Staking extends Model
             }
         }
     }
-
+    
     public static function finalizePayout()
     {
         $today = now()->toDateString();
@@ -225,7 +225,7 @@ class Staking extends Model
                         'transfer_id' => $asset_transfer->id,
                         'amount' => $staking->amount,
                     ]);
-
+                    
                     Log::channel('staking')->info('Staking principal successfully paid out', [
                         'user_id' => $staking->user_id,
                         'staking_id' => $staking->id,
