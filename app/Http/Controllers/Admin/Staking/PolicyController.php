@@ -12,6 +12,7 @@ use App\Models\PolicyModifyLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -33,39 +34,45 @@ class PolicyController extends Controller
             ->get();
 */
         return view('admin.staking.policy', compact('coins', 'policies'));
-        
+
     }
 
     public function view(Request $request)
     {
         $coins = Coin::all();
         $locale = LanguagePolicy::where('type', 'locale')->first()->content;
-        
+
+        $all_days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
         switch  ($request->mode) {
             case 'create' :
-                return view('admin.staking.policy-create', compact('coins', 'locale'));
-            break;
+
+                return view('admin.staking.policy-create', compact('coins', 'locale', 'all_days'));
 
             case 'view' :
                 $view = StakingPolicy::with('translations')->find($request->id);
+                $selected_days = explode(',', $view->staking_days ?? '');
 
-                return view('admin.staking.policy-view', compact('coins', 'locale', 'view'));
-            break;
+                return view('admin.staking.policy-view', compact('coins', 'locale', 'view', 'all_days', 'selected_days'));
+
         }
     }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
 
         DB::beginTransaction();
 
         try {
-              
-            $data = $request->except('translation');
+            $days = $request->input('staking_days', []);
+
+            $data = $request->except('staking_days', 'translation');
+            $data['staking_days'] = implode(',', $days);
+
             $staking_policy = StakingPolicy::create($data);
 
             $locales = $request->translation;
-            
+
             foreach ($locales as $code => $locale) {
                 StakingPolicyTranslation::create([
                     'policy_id' => $staking_policy->id,
@@ -74,7 +81,7 @@ class PolicyController extends Controller
                     'memo' => $locale['memo'],
                 ]);
             }
-                
+
             DB::commit();
 
             return response()->json([
@@ -85,7 +92,7 @@ class PolicyController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             \Log::error('Failed to create staking policy', ['error' => $e->getMessage()]);
 
             return response()->json([
@@ -96,21 +103,25 @@ class PolicyController extends Controller
 
     }
 
-    public function update(Request $request) 
+    public function update(Request $request)
     {
         DB::beginTransaction();
 
         try {
-            
-            $staking_policy = StakingPolicy::findOrFail($request->id); 
-            
-            $data = $request->except('translation');
+
+            $staking_policy = StakingPolicy::findOrFail($request->id);
+
+            $days = $request->input('staking_days', []);
+
+            $data = $request->except('staking_days', 'translation');
+            $data['staking_days'] = implode(',', $days);
+
             $staking_policy->update($data);
 
             $locales = $request->translation;
-            
+
             foreach ($locales as $code => $locale) {
-            
+
                 $translation = StakingPolicyTranslation::where('policy_id', $request->id)
                     ->where('locale', $code)
                     ->first();
@@ -131,7 +142,7 @@ class PolicyController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             \Log::error('Failed to update staking policy', ['error' => $e->getMessage()]);
 
             return response()->json([
@@ -142,7 +153,7 @@ class PolicyController extends Controller
     }
 
     public function export()
-    { 
+    {
         $current = now()->toDateString();
 
         return Excel::download(new StakingPolicyExport(), '스테이킹 상품 내역 '.$current.'.xlsx');

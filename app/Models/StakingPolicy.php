@@ -12,12 +12,14 @@ class StakingPolicy extends Model
     use HasFactory, TruncatesDecimals;
 
     protected $fillable = [
+        'is_active',
         'coin_id',
         'staking_type',
         'min_quantity',
         'max_quantity',
         'daily',
         'period',
+        'staking_days',
     ];
 
     protected $casts = [
@@ -56,6 +58,15 @@ class StakingPolicy extends Model
 
         return $this->translations->firstWhere('locale', $locale);
     }
+
+    public function isStakingAvailableToday()
+    {
+        $staking_days = explode(',', $this->staking_days ?? '');
+        $today = strtolower(now()->format('D'));
+
+        return in_array($today, $staking_days);
+    }
+
     protected function serializeDate(\DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

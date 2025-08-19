@@ -9,11 +9,20 @@
                     <h5 class="card-title">스테이킹 정책</h5>
                 </div>
                 <form method="POST" action="{{ route('admin.staking.policy.update') }}" id="ajaxForm">
-                    @csrf    
+                    @csrf
                     <input type="hidden" name="id" value="{{ $view->id }}">
                     <hr>
                     <table class="table table-bordered mt-5 mb-5">
                         <tbody>
+                            <tr>
+                                <th class="text-center align-middle">사용 여부</th>
+                                <td class="align-middle" colspan="3">
+                                    <input type="radio" name="is_active" value="y" id="is_active_y" class="form-check-input" @if($view->is_active == 'y') checked @endif>
+                                    <label class="form-check-label me-3" for="is_active_y">사용</label>
+                                    <input type="radio" name="is_active" value="n" id="is_active_n" class="form-check-input" @if($view->is_active == 'n') checked @endif>
+                                    <label class="form-check-label" for="is_active_n">미사용</label>
+                                </td>
+                            </tr>
                             <tr>
                                 <th class="text-center align-middle">이름</th>
                                 <td class="align-middle" colspan="3">
@@ -47,6 +56,18 @@
                                     <label class="form-check-label" for="daily">원리금 지급형</label>
                                 </td>
                             <tr>
+                                <th class="text-center align-middle">수익률</th>
+                                <td class="align-middle d-flex">
+                                    <input type="text" name="daily" value="{{ $view->daily }}" class="form-control w-25">
+                                    <div class="px-2 d-flex align-items-center">%</div>
+                                </td>
+                                <th class="text-center align-middle">기간</th>
+                                <td class="align-middle d-flex">
+                                    <input type="text" name="period" value="{{ $view->period }}" class="form-control w-25">
+                                    <div class="px-2 d-flex align-items-center">일</div>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th class="text-center align-middle">참여수량</th>
                                 <td class="align-middle" colspan="3">
                                     <div class="d-flex mb-3">
@@ -57,15 +78,15 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th class="text-center align-middle">수익률</th>
-                                <td class="align-middle d-flex">
-                                    <input type="text" name="daily" value="{{ $view->daily }}" class="form-control w-25">
-                                    <div class="px-2 d-flex align-items-center">%</div>
-                                </td>
-                                <th class="text-center align-middle">기간</th>
-                                <td class="align-middle d-flex">
-                                    <input type="text" name="period" value="{{ $view->period }}" class="form-control w-25">
-                                    <div class="px-2 d-flex align-items-center">일</div>
+                                <th class="text-center align-middle">스테이킹 수익 요일</th>
+                                <td colspan="3" class="align-middle">
+                                    @foreach($all_days as $key => $label)
+                                        <label class="me-2">
+                                            <input type="checkbox" name="staking_days[]" value="{{ $label }}" class="form-check-input"
+                                                {{ in_array($label, $selected_days) ? 'checked' : '' }}>
+                                            {{ $label }}
+                                        </label>
+                                    @endforeach
                                 </td>
                             </tr>
                             <tr>
@@ -81,7 +102,7 @@
                                         </div>
                                     </div>
                                     @endforeach
-                                    
+
                                 </td>
                             </tr>
                         </tbody>

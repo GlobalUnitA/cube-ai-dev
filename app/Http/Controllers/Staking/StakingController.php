@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Staking;
 
-use App\Models\User;
 use App\Models\Asset;
+use App\Models\AssetTransfer;
 use App\Models\Income;
 use App\Models\Staking;
 use App\Models\StakingPolicy;
@@ -18,7 +18,7 @@ class StakingController extends Controller
 {
     public function __construct()
     {
-        
+
     }
 
     public function index()
@@ -28,7 +28,7 @@ class StakingController extends Controller
             $query->where('is_active', 'y');
         })
         ->get();
-        
+
         return view('staking.staking', compact('assets'));
     }
 
@@ -46,7 +46,7 @@ class StakingController extends Controller
 
         return view('staking.profit', compact('staking', 'profits'));
     }
-    
+
     public function confirm($id)
     {
         $staking = StakingPolicy::find($id);
@@ -56,23 +56,25 @@ class StakingController extends Controller
             ->first();
         $balance = $asset->balance;
 
-        $date = $this->getStakingDate($staking->period);
+        $date = $this->getStakingDate($staking);
 
         return view('staking.confirm', compact('staking', 'date', 'balance'));
     }
 
-    
+
     public function data(Request $request)
     {
-        $staking = StakingPolicy::where('coin_id', $request->coin)->get();
+        $staking = StakingPolicy::where('coin_id', $request->coin)
+            ->where('is_active', 'y')
+            ->get();
 
         return response()->json($staking->toArray());
     }
     public function store(Request $request)
     {
         $startDate = Carbon::now()->subDays(30);
-        $endDate = Carbon::now(); 
-        
+        $endDate = Carbon::now();
+
         $staking = StakingPolicy::find($request->staking);
 
         $min = $staking->min_quantity;
@@ -96,8 +98,6 @@ class StakingController extends Controller
             if ($asset->balance < $request->amount) {
                 throw new \Exception(__('asset.lack_balance_notice'));
             }
-    
-            $date = $this->getStakingDate($staking->period);
 
             $staking = Staking::create([
                 'user_id' => auth()->id(),
@@ -106,8 +106,18 @@ class StakingController extends Controller
                 'staking_id' => $staking->id,
                 'amount' => $request->amount,
                 'period' => $staking->period,
-                'started_at' => $date['start'],
-                'ended_at' => $date['end'],
+                'remaining_days' => $staking->period,
+            ]);
+
+            AssetTransfer::create([
+                'user_id' => $staking->user_id,
+                'asset_id' => $asset->id,
+                'type' => 'staking',
+                'status' => 'completed',
+                'amount' => $request->amount,
+                'actual_amount' => $request->amount,
+                'before_balance' => $asset->balance,
+                'after_balance' => $asset->balance - $request->amount,
             ]);
 
             $asset->update([
@@ -117,13 +127,13 @@ class StakingController extends Controller
             $income->user->profile->referralBonus($staking);
 
             DB::commit();
-        
+
             return response()->json([
                 'status' => 'success',
                 'message' => __('staking.staking_success_notice'),
                 'url' => route('home'),
             ]);
-            
+
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -131,18 +141,46 @@ class StakingController extends Controller
                 'status' => 'error',
                 'message' =>  $e->getMessage(),
             ]);
-        
+
         }
-        
+
     }
 
-    private function getStakingDate($period)
+    private function getStakingDate($policy)
     {
+
         $start = Carbon::today()->addDays(1);
+
+        $end = $start->copy();
+
+        $dayMap = [
+            'sun' => 0,
+            'mon' => 1,
+            'tue' => 2,
+            'wed' => 3,
+            'thu' => 4,
+            'fri' => 5,
+            'sat' => 6,
+        ];
+
+        $available_days = array_map(fn($d) => $dayMap[strtolower($d)], explode(',', $policy->staking_days));
+
+        $period = $policy->period;
+        $count = 0;
+
+        while ($count < $period) {
+            if (in_array($end->dayOfWeek, $available_days)) {
+                $count++;
+            }
+
+            if ($count < $period) {
+                $end->addDay();
+            }
+        }
+
         return [
             'start' => $start,
-            'end' => $start->copy()->addDays($period-1),
+            'end' => $end,
         ];
     }
-    
-}   
+}

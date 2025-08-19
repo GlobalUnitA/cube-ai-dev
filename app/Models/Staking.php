@@ -20,8 +20,7 @@ class Staking extends Model
         'status',
         'amount',
         'period',
-        'started_at',
-        'ended_at',
+        'remaining_days',
     ];
 
     protected $casts = [
@@ -31,7 +30,7 @@ class Staking extends Model
     protected $appends = [
         'status_text',
     ];
-    
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -79,12 +78,22 @@ class Staking extends Model
 
     public static function distributeDaily()
     {
-        $today = now()->toDateString();
-        $stakings = self::whereDate('started_at', '<=', $today)
-            ->whereDate('ended_at', '>=', $today)
+        $stakings = self::where('remaining_days', '>', 0)
+            ->where('status', 'pending')
             ->get();
 
         foreach ($stakings as $staking) {
+
+            if (!$staking->policy->isStakingAvailableToday()) {
+                Log::channel('staking')->info('The day is not designated for profit payout.', [
+                    'user_id' => $staking->user_id,
+                    'staking_id' => $staking->id,
+                    'timestamp' => now(),
+                ]);
+
+                continue;
+            }
+
             DB::beginTransaction();
 
             try {
@@ -101,7 +110,7 @@ class Staking extends Model
                 if ($staking->policy->staking_type === 'daily') {
 
                     $principal = $staking->amount / $staking->period;
-                    $profit -= $principal; 
+                    $profit -= $principal;
 
                     Log::channel('staking')->info('Staking profit - principal', [
                         'user_id' => $staking->user_id,
@@ -111,7 +120,7 @@ class Staking extends Model
                         'timestamp' => now(),
                     ]);
 
-                    $asset = $staking->asset;    
+                    $asset = $staking->asset;
 
                     $asset_transfer = AssetTransfer::create([
                         'user_id' => $staking->user_id,
@@ -142,6 +151,7 @@ class Staking extends Model
                     ]);
 
                 }
+
                 $income = $staking->income;
 
                 $income_transfer = IncomeTransfer::create([
@@ -164,6 +174,8 @@ class Staking extends Model
                     'profit' => $profit,
                 ]);
 
+                $staking->decrement('remaining_days', 1);
+
                 Log::channel('staking')->info('Staking profit distributed', [
                     'user_id' => $staking->user_id,
                     'staking_id' => $staking->id,
@@ -171,7 +183,7 @@ class Staking extends Model
                     'profit' => $profit,
                     'timestamp' => now(),
                 ]);
-                
+
 
                 DB::commit();
 
@@ -188,12 +200,12 @@ class Staking extends Model
             }
         }
     }
-    
+
     public static function finalizePayout()
     {
         $today = now()->toDateString();
 
-        $stakings = self::whereDate('ended_at', '<', $today)
+        $stakings = self::where('remaining_days', '>', 0)
             ->where('status', 'pending')
             ->get();
 
@@ -225,7 +237,7 @@ class Staking extends Model
                         'transfer_id' => $asset_transfer->id,
                         'amount' => $staking->amount,
                     ]);
-                    
+
                     Log::channel('staking')->info('Staking principal successfully paid out', [
                         'user_id' => $staking->user_id,
                         'staking_id' => $staking->id,

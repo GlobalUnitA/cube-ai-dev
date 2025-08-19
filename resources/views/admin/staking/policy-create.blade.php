@@ -9,10 +9,19 @@
                     <h5 class="card-title">스테이킹 정책 추가</h5>
                 </div>
                 <form method="POST" action="{{ route('admin.staking.policy.store') }}" id="ajaxForm">
-                    @csrf    
+                    @csrf
                     <hr>
                     <table class="table table-bordered mt-5 mb-5">
                         <tbody>
+                            <tr>
+                                <th class="text-center align-middle">사용 여부</th>
+                                <td class="align-middle" colspan="3">
+                                    <input type="radio" name="is_active" value="y" id="is_active_y" class="form-check-input">
+                                    <label class="form-check-label me-3" for="is_active_y">사용</label>
+                                    <input type="radio" name="is_active" value="n" id="is_active_n" class="form-check-input">
+                                    <label class="form-check-label" for="is_active_n">미사용</label>
+                                </td>
+                            </tr>
                             <tr>
                                 <th class="text-center align-middle">이름</th>
                                 <td class="align-middle" colspan="3">
@@ -45,15 +54,6 @@
                                     <input type="radio" name="staking_type" value="daily" id="daily" class="form-check-input">
                                     <label class="form-check-label" for="daily">원리금 지급형</label>
                                 </td>
-                            <tr>
-                                <th class="text-center align-middle">참여수량</th>
-                                <td class="align-middle" colspan="3">
-                                    <div class="d-flex mb-3">
-                                        <input type="text" name="min_quantity" class="form-control w-25">
-                                        <div class="px-2 d-flex align-items-center">~</div>
-                                        <input type="text" name="max_quantity" class="form-control w-25">
-                                    </div>
-                                </td>
                             </tr>
                             <tr>
                                 <th class="text-center align-middle">수익률</th>
@@ -65,6 +65,27 @@
                                 <td class="align-middle d-flex">
                                     <input type="text" name="period" class="form-control w-25">
                                     <div class="px-2 d-flex align-items-center">일</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-center align-middle">참여수량</th>
+                                <td class="align-middle" colspan="3">
+                                    <div class="d-flex mb-3">
+                                        <input type="text" name="min_quantity" class="form-control w-25">
+                                        <div class="px-2 d-flex align-items-center">~</div>
+                                        <input type="text" name="max_quantity" class="form-control w-25">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-center align-middle">스테이킹 가능 요일</th>
+                                <td colspan="3" class="align-middle">
+                                    @foreach($all_days as $key => $label)
+                                        <label class="me-2">
+                                            <input type="checkbox" name="staking_days[]" value="{{ $label }}" class="form-check-input">
+                                            {{ $label }}
+                                        </label>
+                                    @endforeach
                                 </td>
                             </tr>
                              <tr>
