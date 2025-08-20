@@ -67,7 +67,7 @@
                         <div class="table-responsive">
                             <table class="table text-nowrap align-middle mb-0 table-striped table-hover">
                                 <thead>
-                                    <tr class="border-2 border-bottom border-primary border-0"> 
+                                    <tr class="border-2 border-bottom border-primary border-0">
                                         <th scope="col" class="text-center">번호</th>
                                         <th scope="col" class="text-center">UID</th>
                                         <th scope="col" class="text-center">이름</th>
@@ -91,7 +91,7 @@
                                         <td scope="col" class="text-center">{{ $value->amount }}</td>
                                         <td scope="col" class="text-center">{{ $value->policy->staking_locale_name }}</td>
                                         <td scope="col" class="text-center">{{ $value->policy->daily }}</td>
-                                        <td scope="col" class="text-center">{{ $value->period }}</td>
+                                        <td scope="col" class="text-center">{{ $value->remaining_days }} / {{ $value->period }}</td>
                                         <td scope="col" class="text-center">
                                             @switch($value->status)
                                                 @case('pending')
