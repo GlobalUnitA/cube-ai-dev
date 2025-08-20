@@ -205,7 +205,7 @@ class Staking extends Model
     {
         $today = now()->toDateString();
 
-        $stakings = self::where('remaining_days', '>', 0)
+        $stakings = self::where('remaining_days', '<=', 0)
             ->where('status', 'pending')
             ->get();
 
