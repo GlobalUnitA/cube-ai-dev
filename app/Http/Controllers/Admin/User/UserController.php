@@ -10,15 +10,16 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        
+
     }
-    
+
 
     public function list(Request $request)
     {
@@ -45,7 +46,7 @@ class UserController extends Controller
             $end_date = Carbon::parse(request('end_date'))->endOfDay();
             $query->where('users.created_at', '<=', $end_date);
         })
-    
+
         ->orderBy('users.created_at', 'desc')
         ->paginate(10);
 
@@ -55,9 +56,9 @@ class UserController extends Controller
 
     public function view($id)
     {
-   
+
         $view = User::find($id);
-        
+
         if (!$view) {
             abort(404, '404 not found');
         }
@@ -67,7 +68,7 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-   
+
         $user = User::find($request->id);
         $user_profile = UserProfile::where('user_id', $request->id)->first();
 
@@ -79,10 +80,12 @@ class UserController extends Controller
 
                 $user->update([
                     'name' => $request->name,
-                    'password' => $request->password ? Hash::make($request->password) : $user->password, 
+                    'password' => $request->password ? Hash::make($request->password) : $user->password,
                 ]);
 
                 $user_profile->update([
+                    'is_valid' => $request->is_valid,
+                    'is_frozen' => $request->is_frozen,
                     'email' => $request->email,
                     'phone' => $request->phone,
                     'pcc' => $request->pcc,
@@ -103,19 +106,24 @@ class UserController extends Controller
             } catch (\Exception $e) {
                 DB::rollBack();
 
-                \Log::error('Failed to update user by admin', ['error' => $e->getMessage()]);
+                Log::error('Failed to update user by admin', ['error' => $e->getMessage()]);
 
                 return response()->json([
                     'status' => 'error',
                     'message' => '예기치 못한 오류가 발생했습니다.',
                 ]);
             }
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => '예기치 못한 오류가 발생했습니다.',
+            ]);
         }
     }
 
     public function reset(Request $request)
     {
-   
+
         $user = User::find($request->user_id);
 
         DB::beginTransaction();
@@ -143,14 +151,14 @@ class UserController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::error('Failed to reset usdt address by admin', ['error' => $e->getMessage()]);
+            Log::error('Failed to reset usdt address by admin', ['error' => $e->getMessage()]);
 
             return response()->json([
                 'status' => 'error',
                 'message' => '예기치 못한 오류가 발생했습니다.',
             ]);
         }
-        
+
     }
 
     public function export(Request $request)
