@@ -15,4 +15,7 @@ return array (
   'participation_list' => 'Lịch sử tham gia',
   'participation_quantity_notice' => 'Vui lòng nhập số lượng tham gia từ tối thiểu :min đến tối đa :max.',
   'staking_success_notice' => 'Staking thành công.',
+  'pending' => 'Đang tiến hành',
+  'expired' => 'Đã kết thúc',
+  'paid' => 'Thanh toán đã hoàn',
 );

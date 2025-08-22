@@ -15,4 +15,7 @@ return array (
   'participation_list' => '参加履歴',
   'participation_quantity_notice' => '参加数量は最低:min以上、最大:max以下で入力してください。',
   'staking_success_notice' => 'ステーキングに成功しました。',
+  'pending' => '進行中',
+  'expired' => '期限切れ',
+  'paid' => '支払い完了',
 );

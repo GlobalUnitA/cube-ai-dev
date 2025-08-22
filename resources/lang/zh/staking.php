@@ -15,4 +15,7 @@ return array (
   'participation_list' => '参与记录',
   'participation_quantity_notice' => '请输入数量最少 :min 以上, 最多 :max 以下',
   'staking_success_notice' => 'Staking成功',
+  'pending' => '进行中',
+  'expired' => '到期',
+  'paid' => '已发放',
 );

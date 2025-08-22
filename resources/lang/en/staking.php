@@ -15,4 +15,7 @@ return array (
   'participation_list' => 'Participation History',
   'participation_quantity_notice' => 'Please enter a participation amount between :min and :max.',
   'staking_success_notice' => 'Staking Successful',
+  'pending' => 'In Progress',
+  'expired' => 'Completed',
+  'paid' => 'Payment completed',
 );

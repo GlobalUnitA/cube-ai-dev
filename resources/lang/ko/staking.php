@@ -15,4 +15,7 @@ return array (
   'participation_list' => '참여내역',
   'participation_quantity_notice' => '참여 수량은 최소 :min 이상, 최대 :max 이하로 입력해 주세요.',
   'staking_success_notice' => '스테이킹에 성공하였습니다.',
+  'pending' => '진행중',
+  'expired' => '만료',
+  'paid' => '지급 완료',
 );
