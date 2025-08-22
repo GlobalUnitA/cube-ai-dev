@@ -16,14 +16,14 @@ class StakingReward extends Model
         'transfer_id',
         'profit',
     ];
-    
+
     protected $casts = [
         'profit' => 'decimal:9',
     ];
 
     public function getStatusTextAttribute()
     {
-        return '지급 완료';
+        return __('staking.paid');
     }
 
     public function staking()

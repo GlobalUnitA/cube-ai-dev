@@ -63,12 +63,13 @@ class Staking extends Model
 
     public function getStatusTextAttribute()
     {
-        if ($this->status === 'pending') {
-            return '진행중';
-        } else if ($this->status === 'completed') {
-            return '만료';
+        switch ($this->status) {
+            case 'pending' :
+                return __('staking.pending');
+            case 'completed' :
+                return __('staking.expired');
         }
-        return '오류';
+        return '';
     }
 
     public function getDailyProfit()
