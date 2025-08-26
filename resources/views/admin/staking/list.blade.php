@@ -75,7 +75,7 @@
                                         <th scope="col" class="text-center">수량</th>
                                         <th scope="col" class="text-center">상품이름</th>
                                         <th scope="col" class="text-center">수익률</th>
-                                        <th scope="col" class="text-center">일수</th>
+                                        <th scope="col" class="text-center">횟수</th>
                                         <th scope="col" class="text-center">상태</th>
                                         <th scope="col" class="text-center">일자</th>
                                     </tr>
@@ -91,7 +91,7 @@
                                         <td scope="col" class="text-center">{{ $value->amount }}</td>
                                         <td scope="col" class="text-center">{{ $value->policy->staking_locale_name }}</td>
                                         <td scope="col" class="text-center">{{ $value->policy->daily }}</td>
-                                        <td scope="col" class="text-center">{{ $value->remaining_days }} / {{ $value->period }}</td>
+                                        <td scope="col" class="text-center">{{ $value->period - $value->remaining_days }} / {{ $value->period }}</td>
                                         <td scope="col" class="text-center">
                                             @switch($value->status)
                                                 @case('pending')

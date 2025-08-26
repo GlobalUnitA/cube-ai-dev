@@ -61,10 +61,10 @@
                                     <input type="text" name="daily" class="form-control w-25">
                                     <div class="px-2 d-flex align-items-center">%</div>
                                 </td>
-                                <th class="text-center align-middle">기간</th>
+                                <th class="text-center align-middle">횟수</th>
                                 <td class="align-middle d-flex">
                                     <input type="text" name="period" class="form-control w-25">
-                                    <div class="px-2 d-flex align-items-center">일</div>
+                                    <div class="px-2 d-flex align-items-center">회</div>
                                 </td>
                             </tr>
                             <tr>

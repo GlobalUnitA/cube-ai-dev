@@ -22,12 +22,12 @@
                 <div>
                     <table class="table text-nowrap align-middle mb-0 table-striped">
                         <thead>
-                            <tr class="border-2 border-bottom border-primary border-0"> 
+                            <tr class="border-2 border-bottom border-primary border-0">
                                 <th scope="col" class="ps-0 text-center">상품이름</th>
                                 <th scope="col" class="text-center">타입</th>
                                 <th scope="col" class="text-center">참여수량</th>
                                 <th scope="col" class="text-center">데일리 <br> 수익률</th>
-                                <th scope="col" class="text-center">기간</th>
+                                <th scope="col" class="text-center">횟수</th>
                                 <th scope="col" class="text-center">수정일자</th>
                             </tr>
                         </thead>
@@ -45,7 +45,7 @@
                                 </td>
                                 <td class="text-center">{{ $val->min_quantity }}&nbsp; ~ &nbsp;{{ $val->max_quantity }}</td>
                                 <td class="text-center">{{ $val->daily }}%</td>
-                                <td class="text-center">{{ $val->period }}일</td>
+                                <td class="text-center">{{ $val->period }}회</td>
                                 <td class="text-center">{{ $val['updated_at'] }}</td>
                             </tr>
                             @endforeach
@@ -57,7 +57,7 @@
                         </tbody>
                     </table>
                     <hr>
-                    <div class="d-flex mt-5">     
+                    <div class="d-flex mt-5">
                         <a href="{{ route('admin.staking.policy.view', ['mode' => 'create']) }}" class="btn btn-info ms-auto">스테이킹 추가</a>
                     </div>
                 </div>
