@@ -17,7 +17,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.asset.list') }}" method="GET">
+                        <form action="{{ route('admin.staking.list') }}" method="GET">
                             @foreach(request()->query() as $key => $value)
                                 @if($key !== 'start_date' && $key !== 'end_date')
                                     <input type="hidden" name="{{ $key }}" value="{{ $value }}">

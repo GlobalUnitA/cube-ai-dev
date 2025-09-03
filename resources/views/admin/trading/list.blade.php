@@ -7,7 +7,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('admin.asset.list') }}" method="GET">
+                        <form action="{{ route('admin.trading.list') }}" method="GET">
                             @foreach(request()->query() as $key => $value)
                                 @if($key !== 'start_date' && $key !== 'end_date')
                                     <input type="hidden" name="{{ $key }}" value="{{ $value }}">
@@ -57,7 +57,7 @@
                         <div class="table-responsive">
                             <table class="table text-nowrap align-middle mb-0 table-striped table-hover">
                                 <thead>
-                                    <tr class="border-2 border-bottom border-primary border-0"> 
+                                    <tr class="border-2 border-bottom border-primary border-0">
                                         <th scope="col" class="text-center">번호</th>
                                         <th scope="col" class="text-center">등급</th>
                                         <th scope="col" class="text-center">UID</th>
