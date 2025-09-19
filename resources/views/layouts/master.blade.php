@@ -13,7 +13,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     @stack('styles')
 </head>
-<body class="p-0">
+<body style="padding: 0;">
 
     <div class="layoutContainer container min-vh-100 overflow-hidden px-0 bg-body border border-sm-0 layout-padding">
         @if(Auth::check() && !Request::is('register*'))
