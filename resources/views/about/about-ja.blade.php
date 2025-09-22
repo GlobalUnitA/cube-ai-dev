@@ -3,7 +3,7 @@
 @section('content')
 
 <iframe 
-  src="{{ asset('about-ja.html') }}"
+  src="{{ asset('html/about-ja.html') }}"
   style="width: 100%; height: 100vh; padding-bottom: 80px; border:none; overflow:hidden;"
   allowfullscreen
   loading="lazy">
