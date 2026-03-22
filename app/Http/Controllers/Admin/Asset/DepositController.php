@@ -98,9 +98,7 @@ class DepositController extends Controller
         try {
 
             $deposit = AssetTransfer::find($request->id);
-            $asset = Asset::find($deposit->asset_id);
-
-            $user = User::find($deposit->user_id);
+        
 
             $deposit->update([
                 'status' => $request->status ?? $deposit->status,
@@ -108,6 +106,11 @@ class DepositController extends Controller
                 'actual_amount' => $request->amount ?? $deposit->actual_amount,
                 'memo' => $request->memo
             ]);
+            
+
+            if ($request->status === 'completed') {
+                $deposit->processDeposit();
+            }
             
             DB::commit(); 
 

@@ -49,10 +49,11 @@
                                 <td colspan="3" class="align-middle">
                                     @if($view->status == 'pending')
                                     <select name="status" id="category" class="form-select w-25">
-                                        <option value="pending" @if($view->status == 'pending') selected @endif>입금신청</option>
-                                        <option value="waiting" @if($view->status == 'completed') selected @endif>입금대기</option>
-                                        <option value="canceled" @if($view->status == 'canceled') selected @endif>입금취소</option>
-                                        <option value="refunded" @if($view->status == 'refunded') selected @endif>입금반환</option>
+                                        <option value="pending">입금신청</option>
+                                        {{--<option value="waiting">입금대기</option>--}}
+                                        <option value="completed">입금완료</option>
+                                        <option value="canceled">입금취소</option>
+                                        <option value="refunded">입금반환</option>
                                     </select>
                                     @else
                                     {{ $view->status_text }}
